@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Chi tiết report', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Report detail</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <a th:href="@{/moderator/reports}" class="btn btn-ghost btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+        <h2 class="page-title">Chi tiết Report #<span th:text="${report.id}"></span></h2>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h3 class="card-title">Thông tin báo cáo</h3>
+            <div class="detail-row">
+                <span class="detail-label">Người báo cáo:</span>
+                <span th:text="${report.reporter.username}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Lý do:</span>
+                <span th:text="${report.reason}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Thời gian:</span>
+                <span th:text="${#temporals.format(report.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Trạng thái:</span>
+                <span class="badge" th:text="${report.status}"
+                      th:classappend="'badge-status-' + ${report.status.name().toLowerCase()}"></span>
+            </div>
+        </div>
+
+        <div class="detail-card" th:if="${report.post != null}">
+            <h3 class="card-title"><i class="fa-solid fa-newspaper"></i> Bài viết bị báo cáo</h3>
+            <div class="detail-row">
+                <span class="detail-label">Tiêu đề:</span>
+                <a th:href="@{/posts/{id}(id=${report.post.id})}" th:text="${report.post.title}"></a>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Tác giả:</span>
+                <span th:text="${report.post.author.username}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Nội dung:</span>
+                <p th:text="${#strings.abbreviate(report.post.content, 300)}" class="content-preview"></p>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Trạng thái:</span>
+                <span class="badge" th:text="${report.post.status}"></span>
+            </div>
+        </div>
+
+        <div class="detail-card" th:if="${report.comment != null}">
+            <h3 class="card-title"><i class="fa-solid fa-comment"></i> Bình luận bị báo cáo</h3>
+            <div class="detail-row">
+                <span class="detail-label">Tác giả:</span>
+                <span th:text="${report.comment.author.username}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Nội dung:</span>
+                <p th:text="${report.comment.content}" class="content-preview"></p>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Bài viết:</span>
+                <a th:href="@{/posts/{id}(id=${report.comment.post.id})}"
+                   th:text="${report.comment.post.title}"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Xu ly (chi hien neu PENDING) -->
+    <div th:if="${report.status.name() == 'PENDING'}" class="report-action-panel">
+        <h3>Xử lý báo cáo</h3>
+
+        <div th:if="${report.post != null}" class="action-row">
+            <form th:action="@{/moderator/reports/{id}/resolve(id=${report.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div class="form-group" style="display:flex;align-items:center;gap:12px;">
+                    <label class="form-label" style="margin:0;white-space:nowrap;">Hành động với bài:</label>
+                    <select name="postAction" class="form-control" style="width:220px;">
+                        <option value="HIDE">Ẩn bài (HIDDEN)</option>
+                        <option value="DELETE">Xóa bài (DELETED)</option>
+                    </select>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa-solid fa-check"></i> Resolve (vi phạm)
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div th:if="${report.comment != null}" class="action-row">
+            <form th:action="@{/moderator/reports/{id}/resolve(id=${report.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa-solid fa-check"></i> Resolve — Xóa comment vi phạm
+                </button>
+            </form>
+        </div>
+
+        <div class="action-row" style="margin-top:12px;">
+            <form th:action="@{/moderator/reports/{id}/reject(id=${report.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-outline"
+                        onclick="return confirm('Bác bỏ báo cáo này?')">
+                    <i class="fa-solid fa-xmark"></i> Reject (không vi phạm)
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Bài đã lưu', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Bookmark</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fa-solid fa-bookmark"></i> Bài viết đã lưu
+        </h2>
+    </div>
+
+    <div class="post-list" th:if="${savedPosts != null and !savedPosts.isEmpty()}">
+        <div th:each="saved : ${savedPosts}" class="post-card">
+            <div class="post-card-body">
+                <div class="post-meta">
+                    <span class="post-topic-badge" th:text="${saved.post.topic.name}"></span>
+                    <span style="font-size:0.75rem;color:var(--color-text-muted);">
+                        Lưu lúc: <span th:text="${#temporals.format(saved.createdAt, 'dd/MM/yyyy')}"></span>
+                    </span>
+                </div>
+
+                <h3 class="post-title">
+                    <a th:href="@{/posts/{id}(id=${saved.post.id})}"
+                       th:text="${saved.post.title}"></a>
+                </h3>
+
+                <p class="post-excerpt"
+                   th:text="${#strings.abbreviate(saved.post.content, 150)}"></p>
+
+                <div class="post-footer">
+                    <span class="post-author">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <span th:text="${saved.post.author.username}"></span>
+                    </span>
+                    <form th:action="@{/bookmarks/post/{id}(id=${saved.post.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-outline btn-sm">
+                            <i class="fa-solid fa-bookmark-slash"></i> Bỏ lưu
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${savedPosts == null or savedPosts.isEmpty()}" class="empty-state">
+        <i class="fa-solid fa-bookmark"></i>
+        <p>Bạn chưa lưu bài viết nào.</p>
+        <a th:href="@{/}" class="btn btn-primary">Khám phá bài viết</a>
+    </div>
+</section>
+</body>
+</html>

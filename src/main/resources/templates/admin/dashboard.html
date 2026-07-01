@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Admin Dashboard', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Dashboard</title></head>
+<body>
+<section>
+    <h2 class="page-title" style="margin-bottom:24px;">
+        <i class="fa-solid fa-gauge"></i> Dashboard
+    </h2>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#6366f1"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${totalUsers}">0</div>
+                <div class="stat-label">Tổng người dùng</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#f43f5e"><i class="fa-solid fa-flag"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${pendingReports}">0</div>
+                <div class="stat-label">Report chờ xử lý</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#10b981"><i class="fa-solid fa-list"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${topics.size()}">0</div>
+                <div class="stat-label">Chủ đề</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-links">
+        <h3>Quản lý nhanh</h3>
+        <div class="quick-links-grid">
+            <a th:href="@{/admin/users}" class="quick-card">
+                <i class="fa-solid fa-users"></i><span>Quản lý Users</span>
+            </a>
+            <a th:href="@{/admin/topics}" class="quick-card">
+                <i class="fa-solid fa-list"></i><span>Quản lý Topics</span>
+            </a>
+            <a th:href="@{/moderator/reports}" class="quick-card">
+                <i class="fa-solid fa-shield-halved"></i><span>Xem Reports</span>
+            </a>
+            <a th:href="@{/admin/audit-logs}" class="quick-card">
+                <i class="fa-solid fa-scroll"></i><span>Audit Logs</span>
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Đăng ký', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Đăng ký</title></head>
+<body>
+<section>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fa-solid fa-user-plus"></i>
+                <h1 class="auth-title">Tạo tài khoản</h1>
+                <p class="auth-subtitle">Tham gia cộng đồng FPTU Forum</p>
+            </div>
+
+            <form th:action="@{/auth/register}" method="post"
+                  th:object="${registerRequest}" class="auth-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-error">
+                    <span th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-username" class="form-label">Username *</label>
+                    <input type="text" id="reg-username" th:field="*{username}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('username')} ? ' is-invalid'"
+                           placeholder="Nhập username (3-50 ký tự)..."/>
+                    <span th:if="${#fields.hasErrors('username')}"
+                          th:errors="*{username}" class="form-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email" class="form-label">Email *</label>
+                    <input type="email" id="reg-email" th:field="*{email}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'"
+                           placeholder="Nhập email..."/>
+                    <span th:if="${#fields.hasErrors('email')}"
+                          th:errors="*{email}" class="form-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-fullName" class="form-label">Họ tên</label>
+                    <input type="text" id="reg-fullName" th:field="*{fullName}"
+                           class="form-control" placeholder="Nhập họ và tên..."/>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reg-password" class="form-label">Mật khẩu *</label>
+                        <input type="password" id="reg-password" th:field="*{password}"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'"
+                               placeholder="Tối thiểu 6 ký tự..."/>
+                        <span th:if="${#fields.hasErrors('password')}"
+                              th:errors="*{password}" class="form-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-confirmPassword" class="form-label">Xác nhận mật khẩu *</label>
+                        <input type="password" id="reg-confirmPassword"
+                               th:field="*{confirmPassword}"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('confirmPassword')} ? ' is-invalid'"
+                               placeholder="Nhập lại mật khẩu..."/>
+                        <span th:if="${#fields.hasErrors('confirmPassword')}"
+                              th:errors="*{confirmPassword}" class="form-error"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fa-solid fa-user-plus"></i> Tạo tài khoản
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Đã có tài khoản?
+                    <a th:href="@{/auth/login}" class="link-primary">Đăng nhập</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

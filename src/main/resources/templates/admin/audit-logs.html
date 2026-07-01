@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Audit Logs', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Audit Logs</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fa-solid fa-scroll"></i> Nhật ký hoạt động
+        </h2>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th><th>Thời gian</th><th>Người thực hiện</th>
+                    <th>Hành động</th><th>Đối tượng</th><th>Ghi chú</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="log : ${logs}">
+                    <td th:text="${log.id}"></td>
+                    <td th:text="${#temporals.format(log.createdAt, 'dd/MM HH:mm')}"></td>
+                    <td>
+                        <strong th:text="${log.actor.username}"></strong>
+                        <small th:text="'(' + ${log.actor.role} + ')'"></small>
+                    </td>
+                    <td>
+                        <span class="badge badge-action" th:text="${log.action}"></span>
+                    </td>
+                    <td>
+                        <span th:if="${log.targetUser != null}">
+                            User: <a th:href="@{/admin/users/{id}(id=${log.targetUser.id})}"
+                                     th:text="${log.targetUser.username}"></a>
+                        </span>
+                        <span th:if="${log.targetPost != null}">
+                            Post: <a th:href="@{/posts/{id}(id=${log.targetPost.id})}"
+                                     th:text="${#strings.abbreviate(log.targetPost.title, 30)}"></a>
+                        </span>
+                        <span th:if="${log.targetComment != null}">
+                            Comment #<span th:text="${log.targetComment.id}"></span>
+                        </span>
+                    </td>
+                    <td th:text="${log.note}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${logs != null and logs.totalPages > 1}" class="pagination">
+        <a th:if="${!logs.first}"
+           th:href="@{/admin/audit-logs(page=${logs.number - 1})}"
+           class="btn btn-outline btn-sm">Trước</a>
+        <span class="page-info"
+              th:text="'Trang ' + (${logs.number} + 1) + '/' + ${logs.totalPages}"></span>
+        <a th:if="${!logs.last}"
+           th:href="@{/admin/audit-logs(page=${logs.number + 1})}"
+           class="btn btn-outline btn-sm">Tiếp</a>
+    </div>
+</section>
+</body>
+</html>

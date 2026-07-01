@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Profile', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Profile</title></head>
+<body>
+<section>
+    <div class="profile-page">
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <i class="fa-solid fa-circle-user profile-icon"></i>
+            </div>
+
+            <div class="profile-info">
+                <h2 class="profile-name"
+                    th:text="${user.fullName != null ? user.fullName : user.username}"></h2>
+                <p class="profile-username">@<span th:text="${user.username}"></span></p>
+                <p class="profile-email">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span th:text="${user.email}"></span>
+                </p>
+
+                <div class="profile-badges">
+                    <span class="badge"
+                          th:classappend="'badge-' + ${user.role.name().toLowerCase()}"
+                          th:text="${user.role}"></span>
+                    <span class="badge"
+                          th:classappend="'badge-status-' + ${user.status.name().toLowerCase()}"
+                          th:text="${user.status}"></span>
+                </div>
+
+                <p class="profile-joined">
+                    <i class="fa-solid fa-calendar"></i>
+                    Tham gia: <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></span>
+                </p>
+            </div>
+
+            <div class="profile-actions">
+                <a th:href="@{/change-password}" class="btn btn-outline">
+                    <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+                </a>
+                <a th:href="@{/posts/new}" class="btn btn-primary">
+                    <i class="fa-solid fa-pen-to-square"></i> Đăng bài mới
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
