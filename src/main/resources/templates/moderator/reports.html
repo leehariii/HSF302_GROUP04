@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Báo cáo vi phạm', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Reports</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fa-solid fa-flag"></i> Báo cáo chờ xử lý
+            <span class="badge badge-danger" th:text="${pendingCount}"></span>
+        </h2>
+    </div>
+
+    <div class="table-card" th:if="${reports != null and !reports.isEmpty()}">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Loại</th>
+                    <th>Người báo cáo</th>
+                    <th>Lý do</th>
+                    <th>Thời gian</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="report : ${reports}">
+                    <td th:text="${report.id}"></td>
+                    <td>
+                        <span th:if="${report.post != null}" class="badge badge-post">Post</span>
+                        <span th:if="${report.comment != null}" class="badge badge-comment">Comment</span>
+                    </td>
+                    <td th:text="${report.reporter.username}"></td>
+                    <td th:text="${#strings.abbreviate(report.reason, 60)}"></td>
+                    <td th:text="${#temporals.format(report.createdAt, 'dd/MM HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{/moderator/reports/{id}(id=${report.id})}"
+                           class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-eye"></i> Xem
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${reports == null or reports.isEmpty()}" class="empty-state">
+        <i class="fa-solid fa-circle-check"></i>
+        <p>Không có report nào cần xử lý!</p>
+    </div>
+
+    <div th:if="${reports != null and reports.totalPages > 1}" class="pagination">
+        <a th:if="${!reports.first}"
+           th:href="@{/moderator/reports(page=${reports.number - 1})}"
+           class="btn btn-outline btn-sm">Trước</a>
+        <span class="page-info"
+              th:text="'Trang ' + (${reports.number} + 1) + '/' + ${reports.totalPages}"></span>
+        <a th:if="${!reports.last}"
+           th:href="@{/moderator/reports(page=${reports.number + 1})}"
+           class="btn btn-outline btn-sm">Tiếp</a>
+    </div>
+</section>
+</body>
+</html>

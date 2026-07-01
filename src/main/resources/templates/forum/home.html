@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Trang chủ', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><title>Trang chủ</title></head>
+<body>
+<section>
+    <div class="forum-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title"><i class="fa-solid fa-list"></i> Chủ đề</h3>
+                <ul class="topic-list">
+                    <li>
+                        <a th:href="@{/}" class="topic-item">
+                            <i class="fa-solid fa-fire"></i> Tất cả bài viết
+                        </a>
+                    </li>
+                    <li th:each="topic : ${topics}">
+                        <a th:href="@{/topics/{id}(id=${topic.id})}"
+                           class="topic-item"
+                           th:text="${topic.name}"></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="sidebar-card">
+                <a th:href="@{/posts/new}" class="btn btn-primary btn-full">
+                    <i class="fa-solid fa-pen-to-square"></i> Đăng bài mới
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="posts-main">
+            <div class="page-header">
+                <h2 class="page-title">
+                    <i class="fa-solid fa-newspaper"></i>
+                    <span th:if="${keyword}" th:text="'Kết quả: ' + keyword"></span>
+                    <span th:unless="${keyword}">Bài viết mới nhất</span>
+                </h2>
+            </div>
+
+            <div class="post-list" th:if="${posts != null and !posts.isEmpty()}">
+                <div th:each="post : ${posts}"
+                     class="post-card"
+                     th:classappend="${post.isPinned} ? ' post-pinned'">
+
+                    <div th:if="${post.isPinned}" class="post-pin-badge">
+                        <i class="fa-solid fa-thumbtack"></i> Ghim
+                    </div>
+
+                    <div class="post-card-body">
+                        <div class="post-meta">
+                            <span class="post-topic-badge" th:text="${post.topic.name}"></span>
+                        </div>
+
+                        <h3 class="post-title">
+                            <a th:href="@{/posts/{id}(id=${post.id})}"
+                               th:text="${post.title}"></a>
+                        </h3>
+
+                        <p class="post-excerpt"
+                           th:text="${#strings.abbreviate(post.content, 200)}"></p>
+
+                        <div class="post-footer">
+                            <div class="post-author">
+                                <i class="fa-solid fa-circle-user"></i>
+                                <span th:text="${post.author.username}"></span>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="fa-solid fa-eye"></i> <span th:text="${post.viewCount}"></span></span>
+                                <span><i class="fa-solid fa-clock"></i>
+                                    <span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${posts == null or posts.isEmpty()}" class="empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>Chưa có bài viết nào.</p>
+                <a th:href="@{/posts/new}" sec:authorize="isAuthenticated()"
+                   class="btn btn-primary">Viết bài đầu tiên</a>
+            </div>
+
+            <!-- Pagination -->
+            <div th:if="${posts != null and posts.totalPages > 1}" class="pagination">
+                <a th:if="${!posts.first}"
+                   th:href="@{/(page=${posts.number - 1}, keyword=${keyword})}"
+                   class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-chevron-left"></i> Trước
+                </a>
+                <span class="page-info"
+                      th:text="'Trang ' + (${posts.number} + 1) + ' / ' + ${posts.totalPages}"></span>
+                <a th:if="${!posts.last}"
+                   th:href="@{/(page=${posts.number + 1}, keyword=${keyword})}"
+                   class="btn btn-outline btn-sm">
+                    Tiếp <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </div>
+        </main>
+    </div>
+</section>
+</body>
+</html>

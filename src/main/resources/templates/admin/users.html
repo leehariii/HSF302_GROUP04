@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Quản lý Users', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Quản lý Users</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <h2 class="page-title"><i class="fa-solid fa-users"></i> Quản lý người dùng</h2>
+    </div>
+
+    <form th:action="@{/admin/users}" method="get" class="search-bar">
+        <input type="text" name="keyword" th:value="${keyword}"
+               class="form-control" placeholder="Tìm theo username..."/>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-search"></i> Tìm
+        </button>
+        <a th:href="@{/admin/users}" class="btn btn-ghost btn-sm">Xóa lọc</a>
+    </form>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th><th>Username</th><th>Email</th>
+                    <th>Họ tên</th><th>Role</th><th>Trạng thái</th>
+                    <th>Ngày tạo</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td>
+                        <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                           th:text="${user.username}"></a>
+                    </td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.fullName}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="'badge-' + ${user.role.name().toLowerCase()}"
+                              th:text="${user.role}"></span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${user.status.name() == 'BANNED'} ? 'badge-danger' : 'badge-success'"
+                              th:text="${user.status}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                           class="btn btn-outline btn-sm">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${users instanceof T(org.springframework.data.domain.Page) and users.totalPages > 1}"
+         class="pagination">
+        <a th:if="${!users.first}"
+           th:href="@{/admin/users(page=${users.number - 1})}"
+           class="btn btn-outline btn-sm">Trước</a>
+        <span class="page-info"
+              th:text="'Trang ' + (${users.number} + 1) + '/' + ${users.totalPages}"></span>
+        <a th:if="${!users.last}"
+           th:href="@{/admin/users(page=${users.number + 1})}"
+           class="btn btn-outline btn-sm">Tiếp</a>
+    </div>
+</section>
+</body>
+</html>

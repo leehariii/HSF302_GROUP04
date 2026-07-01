@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout(${topic.name}, ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><title>Topic</title></head>
+<body>
+<section>
+    <div class="forum-layout">
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3 class="sidebar-title"><i class="fa-solid fa-list"></i> Chủ đề khác</h3>
+                <ul class="topic-list">
+                    <li><a th:href="@{/topics}" class="topic-item">← Tất cả chủ đề</a></li>
+                    <li th:each="t : ${allTopics}">
+                        <a th:href="@{/topics/{id}(id=${t.id})}"
+                           th:text="${t.name}"
+                           class="topic-item"
+                           th:classappend="${t.id == topic.id} ? ' active'"></a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="posts-main">
+            <div class="page-header">
+                <div>
+                    <h2 class="page-title">
+                        <i class="fa-solid fa-hashtag"></i>
+                        <span th:text="${topic.name}"></span>
+                    </h2>
+                    <p th:text="${topic.description}" class="page-subtitle"></p>
+                </div>
+                <a sec:authorize="isAuthenticated()"
+                   th:href="@{/posts/new}" class="btn btn-primary">
+                    <i class="fa-solid fa-pen-to-square"></i> Đăng bài
+                </a>
+            </div>
+
+            <div class="post-list" th:if="${posts != null and !posts.isEmpty()}">
+                <div th:each="post : ${posts}"
+                     class="post-card"
+                     th:classappend="${post.isPinned} ? ' post-pinned'">
+                    <div th:if="${post.isPinned}" class="post-pin-badge">
+                        <i class="fa-solid fa-thumbtack"></i> Ghim
+                    </div>
+                    <div class="post-card-body">
+                        <h3 class="post-title">
+                            <a th:href="@{/posts/{id}(id=${post.id})}"
+                               th:text="${post.title}"></a>
+                        </h3>
+                        <p class="post-excerpt"
+                           th:text="${#strings.abbreviate(post.content, 180)}"></p>
+                        <div class="post-footer">
+                            <div class="post-author">
+                                <i class="fa-solid fa-circle-user"></i>
+                                <span th:text="${post.author.username}"></span>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="fa-solid fa-eye"></i> <span th:text="${post.viewCount}"></span></span>
+                                <span><i class="fa-solid fa-clock"></i>
+                                    <span th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${posts == null or posts.isEmpty()}" class="empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>Chủ đề này chưa có bài viết nào.</p>
+            </div>
+        </main>
+    </div>
+</section>
+</body>
+</html>

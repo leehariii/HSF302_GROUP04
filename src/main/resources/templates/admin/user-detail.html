@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Chi tiết User', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Chi tiết User</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <a th:href="@{/admin/users}" class="btn btn-ghost btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+        <h2 class="page-title">Chi tiết: <span th:text="${targetUser.username}"></span></h2>
+    </div>
+
+    <div class="detail-grid">
+        <!-- Thong tin user -->
+        <div class="detail-card">
+            <h3 class="card-title">Thông tin tài khoản</h3>
+            <div class="detail-row"><span class="detail-label">ID:</span> <span th:text="${targetUser.id}"></span></div>
+            <div class="detail-row"><span class="detail-label">Username:</span> <span th:text="${targetUser.username}"></span></div>
+            <div class="detail-row"><span class="detail-label">Email:</span> <span th:text="${targetUser.email}"></span></div>
+            <div class="detail-row"><span class="detail-label">Họ tên:</span> <span th:text="${targetUser.fullName}"></span></div>
+            <div class="detail-row">
+                <span class="detail-label">Role:</span>
+                <span class="badge" th:classappend="'badge-' + ${targetUser.role.name().toLowerCase()}"
+                      th:text="${targetUser.role}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Trạng thái:</span>
+                <span class="badge"
+                      th:classappend="${targetUser.status.name() == 'BANNED'} ? 'badge-danger' : 'badge-success'"
+                      th:text="${targetUser.status}"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Tham gia:</span>
+                <span th:text="${#temporals.format(targetUser.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+
+        <!-- Admin actions -->
+        <div class="detail-card">
+            <h3 class="card-title">Hành động quản trị</h3>
+
+            <div th:if="${targetUser.role.name() != 'ADMIN'}">
+                <!-- Ban -->
+                <div class="action-row" th:if="${targetUser.status.name() == 'ACTIVE'}">
+                    <form th:action="@{/admin/users/{id}/ban(id=${targetUser.id})}" method="post"
+                          onsubmit="return confirm('Xác nhận ban user này?')">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-ban"></i> Ban User
+                        </button>
+                    </form>
+                </div>
+                <!-- Unban -->
+                <div class="action-row" th:if="${targetUser.status.name() == 'BANNED'}">
+                    <form th:action="@{/admin/users/{id}/unban(id=${targetUser.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-circle-check"></i> Unban User
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Promote -->
+            <div class="action-row" th:if="${targetUser.role.name() == 'MEMBER'}">
+                <form th:action="@{/admin/users/{id}/promote(id=${targetUser.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-arrow-up"></i> Promote → MODERATOR
+                    </button>
+                </form>
+            </div>
+            <!-- Demote -->
+            <div class="action-row" th:if="${targetUser.role.name() == 'MODERATOR'}">
+                <form th:action="@{/admin/users/{id}/demote(id=${targetUser.id})}" method="post"
+                      onsubmit="return confirm('Demote Moderator này?')">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fa-solid fa-arrow-down"></i> Demote → MEMBER
+                    </button>
+                </form>
+            </div>
+
+            <!-- Mute / Unmute -->
+            <div class="action-row" style="gap:8px;">
+                <a th:href="@{/moderator/users/{id}/mute(id=${targetUser.id})}"
+                   class="btn btn-outline">
+                    <i class="fa-solid fa-microphone-slash"></i> Mute
+                </a>
+                <form th:action="@{/moderator/users/{id}/unmute(id=${targetUser.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-ghost">
+                        <i class="fa-solid fa-microphone"></i> Unmute
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lich su restriction -->
+    <div class="detail-card" th:if="${restrictions != null and !restrictions.isEmpty()}">
+        <h3 class="card-title"><i class="fa-solid fa-list"></i> Lịch sử hạn chế</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Loại</th><th>Lý do</th><th>Trạng thái</th>
+                    <th>Bắt đầu</th><th>Kết thúc</th><th>Moderator</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${restrictions}">
+                    <td><span class="badge badge-warning" th:text="${r.restrictionType}"></span></td>
+                    <td th:text="${r.reason}"></td>
+                    <td>
+                        <span th:classappend="${r.isActive} ? 'badge badge-danger' : 'badge badge-secondary'"
+                              th:text="${r.isActive ? 'Đang hiệu lực' : 'Đã hết'}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(r.startAt, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${r.endAt != null ? #temporals.format(r.endAt, 'dd/MM/yyyy HH:mm') : 'Vĩnh viễn'}"></td>
+                    <td th:text="${r.createdBy.username}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

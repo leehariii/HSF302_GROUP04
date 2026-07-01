@@ -1,14 +1,4 @@
 target/
-.idea/
 *.iml
-*.iws
-out/
 
-src/main/resources/application.properties
-HSF302_GROUP04/src/main/resources/application.properties
 
-src/main/resources/static/uploads/
-HSF302_GROUP04/src/main/resources/static/uploads/
-
-.DS_Store
-Thumbs.db
