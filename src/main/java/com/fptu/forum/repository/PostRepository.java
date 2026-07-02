@@ -78,4 +78,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT p FROM Post p JOIN FETCH p.topic JOIN FETCH p.author ORDER BY p.createdAt DESC",
            countQuery = "SELECT COUNT(p) FROM Post p")
     Page<Post> findAllPosts(Pageable pageable);
+
+    // Admin: kiem tra topic co bai viet nao khong (truoc khi xoa topic)
+    boolean existsByTopicId(Long topicId);
 }

@@ -6,29 +6,58 @@
 <body>
 <section>
     <h2 class="page-title" style="margin-bottom:24px;">
-        <i class="fa-solid fa-gauge"></i> Dashboard
+        <i class="fa-solid fa-gauge"></i> Admin Dashboard
     </h2>
 
+    <!-- 7 stat cards -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon" style="color:#6366f1"><i class="fa-solid fa-users"></i></div>
             <div class="stat-body">
-                <div class="stat-number" th:text="${totalUsers}">0</div>
+                <div class="stat-number" th:text="${stats.totalUsers}">0</div>
                 <div class="stat-label">Tổng người dùng</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#10b981"><i class="fa-solid fa-user-check"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${stats.totalMembers}">0</div>
+                <div class="stat-label">Thành viên (MEMBER)</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#f59e0b"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${stats.totalModerators}">0</div>
+                <div class="stat-label">Kiểm duyệt viên</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#3b82f6"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${stats.totalPosts}">0</div>
+                <div class="stat-label">Bài viết</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color:#8b5cf6"><i class="fa-solid fa-comments"></i></div>
+            <div class="stat-body">
+                <div class="stat-number" th:text="${stats.totalComments}">0</div>
+                <div class="stat-label">Bình luận</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon" style="color:#f43f5e"><i class="fa-solid fa-flag"></i></div>
             <div class="stat-body">
-                <div class="stat-number" th:text="${pendingReports}">0</div>
+                <div class="stat-number" th:text="${stats.pendingReports}">0</div>
                 <div class="stat-label">Report chờ xử lý</div>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon" style="color:#10b981"><i class="fa-solid fa-list"></i></div>
+            <div class="stat-icon" style="color:#ef4444"><i class="fa-solid fa-ban"></i></div>
             <div class="stat-body">
-                <div class="stat-number" th:text="${topics.size()}">0</div>
-                <div class="stat-label">Chủ đề</div>
+                <div class="stat-number" th:text="${stats.bannedUsers}">0</div>
+                <div class="stat-label">Tài khoản bị khóa</div>
             </div>
         </div>
     </div>
