@@ -18,11 +18,13 @@ public interface PostService {
 
     Post findActiveById(Long id);
 
-    Page<Post> findAllActive(Pageable pageable);
+    Post getPostForDetailView(Long id, User currentUser);
+
+    Page<Post> findAllActive(Long topicId, Pageable pageable);
 
     List<Post> findActiveByTopic(Long topicId);
 
-    Page<Post> searchPosts(String keyword, Pageable pageable);
+    Page<Post> searchPosts(String keyword, Long topicId, Pageable pageable);
 
     Post createPost(PostRequest request, User author);
 

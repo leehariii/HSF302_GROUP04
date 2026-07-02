@@ -3,25 +3,25 @@ package com.fptu.forum.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * DTO dung cho chuc nang quen mat khau (ForgotPassword).
- * Tao stub de project compile - nghiep vu thuoc Auth Module (Trong).
- */
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ForgotPasswordRequest {
 
-    @NotBlank(message = "Email khong duoc de trong")
-    @Email(message = "Email khong hop le")
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không đúng định dạng")
     private String email;
 
-    @NotBlank(message = "Mat khau moi khong duoc de trong")
-    @Size(min = 6, message = "Mat khau toi thieu 6 ky tu")
+    @NotBlank(message = "Mật khẩu mới không được để trống")
+    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
     private String newPassword;
 
-    @NotBlank(message = "Xac nhan mat khau khong duoc de trong")
+    @NotBlank(message = "Vui lòng xác nhận mật khẩu mới")
     private String confirmPassword;
 }

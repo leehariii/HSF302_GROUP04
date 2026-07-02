@@ -27,7 +27,21 @@
                 <span><i class="fa-solid fa-eye"></i> <span th:text="${post.viewCount}"></span></span>
             </div>
 
+            <!-- BANNER CANH BAO BAI VIET AN/XOA -->
+            <div th:if="${post.status.name() != 'ACTIVE'}" class="alert alert-warning" style="margin-top: 16px; margin-bottom: 16px;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <strong>Bài viết này đang bị ẩn hoặc xóa.</strong>
+                <span th:if="${post.moderationReason != null and !post.moderationReason.isEmpty()}">
+                    Lý do: <span th:text="${post.moderationReason}"></span>
+                </span>
+            </div>
+
             <h1 class="post-detail-title" th:text="${post.title}"></h1>
+            
+            <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" style="margin-bottom: 24px; text-align: center;">
+                <img th:src="${post.imageUrl}" alt="Post image" style="max-width: 100%; max-height: 500px; border-radius: 8px; object-fit: cover;"/>
+            </div>
+            
             <div class="post-detail-content" th:text="${post.content}"></div>
 
             <!-- ACTION BAR -->

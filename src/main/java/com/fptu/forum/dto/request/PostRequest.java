@@ -22,4 +22,8 @@ public class PostRequest {
 
     @NotNull(message = "Vui long chon topic")
     private Long topicId;
+
+    @jakarta.validation.constraints.Pattern(regexp = "^(https?://.*)?$", message = "URL ảnh phải bắt đầu bằng http:// hoặc https://")
+    @Size(max = 2000, message = "URL ảnh quá dài")
+    private String imageUrl;
 }

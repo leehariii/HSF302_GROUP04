@@ -1,20 +1,19 @@
 package com.fptu.forum.dto.request;
 
-import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * DTO dung cho chuc nang cap nhat profile nguoi dung.
- * Tao stub de project compile - nghiep vu thuoc Auth/Profile Module.
- */
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateProfileRequest {
 
-    @Size(max = 100, message = "Ho ten toi da 100 ky tu")
+    @NotBlank(message = "Tên hiển thị không được để trống")
     private String fullName;
 
-    @Size(max = 255, message = "URL avatar toi da 255 ky tu")
     private String avatarUrl;
 }
