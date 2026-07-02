@@ -15,7 +15,13 @@ public interface AuthService {
     User register(RegisterRequest request);
 
     /**
-     * Doi mat khau.
+     * Doi mat khau (user da dang nhap).
      */
     void changePassword(User user, String currentPassword, String newPassword);
+
+    /**
+     * Dat lai mat khau qua email (khong gui mail that).
+     * Tim user theo email, kiem tra ton tai, ma hoa BCrypt roi luu.
+     */
+    void forgotPassword(String email, String newPassword);
 }

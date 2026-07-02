@@ -8,7 +8,12 @@
     <div class="profile-page">
         <div class="profile-card">
             <div class="profile-avatar">
-                <i class="fa-solid fa-circle-user profile-icon"></i>
+                <!-- Hien thi avatar neu co URL, nguoc lai hien icon mac dinh -->
+                <img th:if="${user.avatarUrl != null and !#strings.isEmpty(user.avatarUrl)}"
+                     th:src="${user.avatarUrl}"
+                     class="profile-avatar-img" alt="Avatar"/>
+                <i th:unless="${user.avatarUrl != null and !#strings.isEmpty(user.avatarUrl)}"
+                   class="fa-solid fa-circle-user profile-icon"></i>
             </div>
 
             <div class="profile-info">
@@ -36,6 +41,9 @@
             </div>
 
             <div class="profile-actions">
+                <a th:href="@{/profile/edit}" class="btn btn-outline">
+                    <i class="fa-solid fa-pen"></i> Chỉnh sửa profile
+                </a>
                 <a th:href="@{/change-password}" class="btn btn-outline">
                     <i class="fa-solid fa-lock"></i> Đổi mật khẩu
                 </a>

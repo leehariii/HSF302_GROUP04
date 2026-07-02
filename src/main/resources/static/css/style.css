@@ -127,13 +127,13 @@ a:hover { color: var(--color-primary-dk); }
 }
 .dropdown-toggle:hover { background: var(--color-surface2); }
 .dropdown-menu {
-    position: absolute; right: 0; top: calc(100% + 6px);
+    position: absolute; right: 0; top: calc(100% + 4px);
     background: var(--color-surface); border: 1px solid var(--color-border);
     border-radius: var(--radius); box-shadow: var(--shadow);
     min-width: 180px; z-index: 200;
     display: none;
 }
-.dropdown:hover .dropdown-menu { display: block; }
+.dropdown.open .dropdown-menu { display: block; }
 .dropdown-item {
     display: flex; align-items: center; gap: 8px;
     padding: 10px 16px; color: var(--color-text);
@@ -288,14 +288,16 @@ select.form-control { cursor: pointer; }
 
 /* ---- Profile ---- */
 .profile-page { display: flex; justify-content: center; padding: 40px 0; }
-.profile-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 40px; max-width: 500px; width: 100%; text-align: center; }
+.profile-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 40px; max-width: 520px; width: 100%; text-align: center; }
+.profile-avatar { margin-bottom: 8px; }
 .profile-icon { font-size: 5rem; color: var(--color-primary); }
+.profile-avatar-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-primary); }
 .profile-name { font-size: 1.5rem; font-weight: 700; margin-top: 12px; }
 .profile-username { color: var(--color-text-muted); margin-bottom: 12px; }
 .profile-email { color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 12px; }
 .profile-badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
 .profile-joined { color: var(--color-text-muted); font-size: 0.85rem; }
-.profile-actions { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+.profile-actions { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
 
 /* ---- Form page ---- */
 .form-page { display: flex; justify-content: center; }

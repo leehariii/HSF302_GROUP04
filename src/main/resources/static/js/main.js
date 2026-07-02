@@ -38,6 +38,27 @@ function togglePassword(inputId) {
     }
 }
 
+// ---- Dropdown toggle khi click ----
+document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(function (dropdown) {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        if (toggle) {
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+        }
+    });
+
+    // Dong dropdown khi click ra ngoai
+    document.addEventListener('click', function () {
+        dropdowns.forEach(function (dropdown) {
+            dropdown.classList.remove('open');
+        });
+    });
+});
+
 // ---- Auto-hide flash messages sau 5 giay ----
 document.addEventListener('DOMContentLoaded', function () {
     const alerts = document.querySelectorAll('.alert');
