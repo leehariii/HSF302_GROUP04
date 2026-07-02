@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('403 Forbidden', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>403</title></head>
+<body>
+<section>
+    <div class="empty-state" style="padding:100px 20px;">
+        <i class="fa-solid fa-ban" style="color:var(--color-danger);opacity:1;font-size:4rem;"></i>
+        <h2 style="font-size:1.5rem;margin-bottom:8px;">403 — Không có quyền truy cập</h2>
+        <p>Bạn không có quyền thực hiện hành động này.</p>
+        <a th:href="@{/}" class="btn btn-primary" style="margin-top:16px;">
+            <i class="fa-solid fa-home"></i> Về trang chủ
+        </a>
+    </div>
+</section>
+</body>
+</html>

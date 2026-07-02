@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('Chủ đề', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>Chủ đề</title></head>
+<body>
+<section>
+    <div class="page-header">
+        <h2 class="page-title"><i class="fa-solid fa-list"></i> Danh sách chủ đề</h2>
+    </div>
+
+    <div class="topics-grid">
+        <div th:each="topic : ${topics}" class="topic-card">
+            <div class="topic-card-icon">
+                <i class="fa-solid fa-hashtag"></i>
+            </div>
+            <div class="topic-card-body">
+                <h3>
+                    <a th:href="@{/topics/{id}(id=${topic.id})}"
+                       th:text="${topic.name}"></a>
+                </h3>
+                <p th:text="${topic.description}" class="topic-desc"></p>
+                <small class="topic-date">
+                    Tạo: <span th:text="${#temporals.format(topic.createdAt, 'dd/MM/yyyy')}"></span>
+                </small>
+            </div>
+            <div class="topic-card-action">
+                <a th:href="@{/topics/{id}(id=${topic.id})}" class="btn btn-outline btn-sm">
+                    Xem bài <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${topics == null or topics.isEmpty()}" class="empty-state">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>Chưa có chủ đề nào.</p>
+    </div>
+</section>
+</body>
+</html>
