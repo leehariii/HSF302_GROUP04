@@ -52,4 +52,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // Moderator: lay tat ca bai viet (khong loc status) de kiem duyet
     @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC")
     Page<Post> findAllPosts(Pageable pageable);
+
+    // Admin: kiem tra topic co bai viet nao khong (truoc khi xoa topic)
+    boolean existsByTopicId(Long topicId);
 }

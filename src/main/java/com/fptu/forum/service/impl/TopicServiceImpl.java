@@ -35,7 +35,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Transactional
     public Topic create(TopicRequest request) {
-        if (topicRepository.existsByName(request.getName())) {
+        if (topicRepository.existsByNameIgnoreCase(request.getName())) {
             throw new IllegalArgumentException(
                     "Ten topic '" + request.getName() + "' da ton tai.");
         }

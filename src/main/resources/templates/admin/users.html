@@ -9,9 +9,33 @@
         <h2 class="page-title"><i class="fa-solid fa-users"></i> Quản lý người dùng</h2>
     </div>
 
-    <form th:action="@{/admin/users}" method="get" class="search-bar">
+    <!-- Search + Filter form -->
+    <form th:action="@{/admin/users}" method="get" class="filter-bar" id="user-filter-form">
         <input type="text" name="keyword" th:value="${keyword}"
-               class="form-control" placeholder="Tìm theo username..."/>
+               class="form-control" placeholder="Tìm username, email, họ tên..." style="flex:1;min-width:180px;"/>
+
+        <select name="role" class="form-control" style="width:160px;">
+            <option value="">-- Tất cả role --</option>
+            <option th:each="r : ${roles}"
+                    th:value="${r.name()}"
+                    th:text="${r.name()}"
+                    th:selected="${r.name() == role}">
+            </option>
+        </select>
+
+        <select name="status" class="form-control" style="width:160px;">
+            <option value="">-- Tất cả trạng thái --</option>
+            <option th:each="s : ${statuses}"
+                    th:value="${s.name()}"
+                    th:text="${s.name()}"
+                    th:selected="${s.name() == status}">
+            </option>
+        </select>
+
+        <!-- Giữ sort/dir khi submit filter -->
+        <input type="hidden" name="sort" th:value="${sort}"/>
+        <input type="hidden" name="dir"  th:value="${dir}"/>
+
         <button type="submit" class="btn btn-primary btn-sm">
             <i class="fa-solid fa-search"></i> Tìm
         </button>
@@ -21,52 +45,85 @@
     <div class="table-card">
         <table class="data-table">
             <thead>
-                <tr>
-                    <th>ID</th><th>Username</th><th>Email</th>
-                    <th>Họ tên</th><th>Role</th><th>Trạng thái</th>
-                    <th>Ngày tạo</th><th></th>
-                </tr>
+            <tr>
+                <th>ID</th>
+                <th>
+                    <a th:href="@{/admin/users(keyword=${keyword},role=${role},status=${status},sort='username',dir=${sort == 'username' and dir == 'asc' ? 'desc' : 'asc'})}"
+                       style="color:inherit;text-decoration:none;">
+                        Username
+                        <i th:if="${sort == 'username'}"
+                           th:classappend="${dir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"
+                           class="fa-solid"></i>
+                    </a>
+                </th>
+                <th>Email</th>
+                <th>Họ tên</th>
+                <th>Role</th>
+                <th>Trạng thái</th>
+                <th>
+                    <a th:href="@{/admin/users(keyword=${keyword},role=${role},status=${status},sort='createdAt',dir=${sort == 'createdAt' and dir == 'asc' ? 'desc' : 'asc'})}"
+                       style="color:inherit;text-decoration:none;">
+                        Ngày tạo
+                        <i th:if="${sort == 'createdAt'}"
+                           th:classappend="${dir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'}"
+                           class="fa-solid"></i>
+                    </a>
+                </th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                <tr th:each="user : ${users}">
-                    <td th:text="${user.id}"></td>
-                    <td>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <img th:if="${user.avatarUrl != null and !#strings.isEmpty(user.avatarUrl)}"
+                             th:src="${user.avatarUrl}"
+                             alt="avatar" style="width:28px;height:28px;border-radius:50%;object-fit:cover;"/>
+                        <i th:unless="${user.avatarUrl != null and !#strings.isEmpty(user.avatarUrl)}"
+                           class="fa-solid fa-circle-user" style="font-size:1.4rem;color:var(--color-muted);"></i>
                         <a th:href="@{/admin/users/{id}(id=${user.id})}"
                            th:text="${user.username}"></a>
-                    </td>
-                    <td th:text="${user.email}"></td>
-                    <td th:text="${user.fullName}"></td>
-                    <td>
-                        <span class="badge"
-                              th:classappend="'badge-' + ${user.role.name().toLowerCase()}"
-                              th:text="${user.role}"></span>
-                    </td>
-                    <td>
-                        <span class="badge"
-                              th:classappend="${user.status.name() == 'BANNED'} ? 'badge-danger' : 'badge-success'"
-                              th:text="${user.status}"></span>
-                    </td>
-                    <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></td>
-                    <td>
-                        <a th:href="@{/admin/users/{id}(id=${user.id})}"
-                           class="btn btn-outline btn-sm">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-                    </td>
-                </tr>
+                    </div>
+                </td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.fullName != null ? user.fullName : '—'}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${user.role.name() == 'ADMIN'} ? 'badge-admin' : (${user.role.name() == 'MODERATOR'} ? 'badge-moderator' : 'badge-member')"
+                          th:text="${user.role}"></span>
+                </td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${user.status.name() == 'BANNED'} ? 'badge-danger' : 'badge-success'"
+                          th:text="${user.status}"></span>
+                </td>
+                <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                       class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${users.isEmpty()}">
+                <td colspan="8" style="text-align:center;color:var(--color-muted);padding:32px;">
+                    Không tìm thấy người dùng nào.
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
 
-    <div th:if="${users instanceof T(org.springframework.data.domain.Page) and users.totalPages > 1}"
-         class="pagination">
+    <!-- Phân trang - giữ filter -->
+    <div th:if="${users.totalPages > 1}" class="pagination">
         <a th:if="${!users.first}"
-           th:href="@{/admin/users(page=${users.number - 1})}"
+           th:href="@{/admin/users(keyword=${keyword},role=${role},status=${status},sort=${sort},dir=${dir},page=${users.number - 1})}"
            class="btn btn-outline btn-sm">Trước</a>
         <span class="page-info"
-              th:text="'Trang ' + (${users.number} + 1) + '/' + ${users.totalPages}"></span>
+              th:text="'Trang ' + (${users.number} + 1) + '/' + ${users.totalPages} + ' (' + ${users.totalElements} + ' người dùng)'"></span>
         <a th:if="${!users.last}"
-           th:href="@{/admin/users(page=${users.number + 1})}"
+           th:href="@{/admin/users(keyword=${keyword},role=${role},status=${status},sort=${sort},dir=${dir},page=${users.number + 1})}"
            class="btn btn-outline btn-sm">Tiếp</a>
     </div>
 </section>

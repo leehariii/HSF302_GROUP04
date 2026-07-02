@@ -64,10 +64,35 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
     /**
-     * Lay danh sach audit log phan trang (Admin).
+     * Lay danh sach audit log phan trang (Admin, khong filter).
      */
     @Override
     public Page<AuditLog> getAllLogs(Pageable pageable) {
+        return auditLogRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    /**
+     * Tim kiem / filter audit log theo actor username va/hoac action.
+     */
+    @Override
+    public Page<AuditLog> searchLogs(String actorUsername, String action, Pageable pageable) {
+        boolean hasActor  = actorUsername != null && !actorUsername.isBlank();
+        boolean hasAction = action != null && !action.isBlank();
+
+        if (hasActor && hasAction) {
+            return auditLogRepository
+                    .findByActionAndActorUsernameContainingIgnoreCaseOrderByCreatedAtDesc(
+                            action, actorUsername, pageable);
+        }
+        if (hasActor) {
+            return auditLogRepository
+                    .findByActorUsernameContainingIgnoreCaseOrderByCreatedAtDesc(
+                            actorUsername, pageable);
+        }
+        if (hasAction) {
+            return auditLogRepository
+                    .findByActionOrderByCreatedAtDesc(action, pageable);
+        }
         return auditLogRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 }
