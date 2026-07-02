@@ -24,5 +24,13 @@ public interface AuditLogService {
 
     void logCommentAction(User actor, AuditAction action, Comment targetComment, String note);
 
+    /** Lay tat ca audit log moi nhat (Admin, khong filter). */
     Page<AuditLog> getAllLogs(Pageable pageable);
+
+    /**
+     * Tim kiem / filter audit log cho Admin.
+     * @param actorUsername null hoac blank = bo qua filter nay
+     * @param action        null hoac blank = bo qua filter nay
+     */
+    Page<AuditLog> searchLogs(String actorUsername, String action, Pageable pageable);
 }

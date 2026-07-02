@@ -11,52 +11,80 @@
         </h2>
     </div>
 
+    <!-- Search + Filter form -->
+    <form th:action="@{/admin/audit-logs}" method="get" class="filter-bar" id="auditlog-filter-form">
+        <input type="text" name="actorUsername" th:value="${actorUsername}"
+               class="form-control" placeholder="Tên người thực hiện..." style="flex:1;min-width:180px;"/>
+
+        <select name="action" class="form-control" style="width:220px;">
+            <option value="">-- Tất cả hành động --</option>
+            <option th:each="a : ${auditActions}"
+                    th:value="${a.name()}"
+                    th:text="${a.name()}"
+                    th:selected="${a.name() == action}">
+            </option>
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-search"></i> Lọc
+        </button>
+        <a th:href="@{/admin/audit-logs}" class="btn btn-ghost btn-sm">Xóa lọc</a>
+    </form>
+
     <div class="table-card">
         <table class="data-table">
             <thead>
-                <tr>
-                    <th>#</th><th>Thời gian</th><th>Người thực hiện</th>
-                    <th>Hành động</th><th>Đối tượng</th><th>Ghi chú</th>
-                </tr>
+            <tr>
+                <th>#</th><th>Thời gian</th><th>Người thực hiện</th>
+                <th>Hành động</th><th>Đối tượng</th><th>Ghi chú</th>
+            </tr>
             </thead>
             <tbody>
-                <tr th:each="log : ${logs}">
-                    <td th:text="${log.id}"></td>
-                    <td th:text="${#temporals.format(log.createdAt, 'dd/MM HH:mm')}"></td>
-                    <td>
-                        <strong th:text="${log.actor.username}"></strong>
-                        <small th:text="'(' + ${log.actor.role} + ')'"></small>
-                    </td>
-                    <td>
-                        <span class="badge badge-action" th:text="${log.action}"></span>
-                    </td>
-                    <td>
-                        <span th:if="${log.targetUser != null}">
-                            User: <a th:href="@{/admin/users/{id}(id=${log.targetUser.id})}"
-                                     th:text="${log.targetUser.username}"></a>
-                        </span>
-                        <span th:if="${log.targetPost != null}">
-                            Post: <a th:href="@{/posts/{id}(id=${log.targetPost.id})}"
-                                     th:text="${#strings.abbreviate(log.targetPost.title, 30)}"></a>
-                        </span>
-                        <span th:if="${log.targetComment != null}">
-                            Comment #<span th:text="${log.targetComment.id}"></span>
-                        </span>
-                    </td>
-                    <td th:text="${log.note}"></td>
-                </tr>
+            <tr th:each="log : ${logs}">
+                <td th:text="${log.id}"></td>
+                <td th:text="${#temporals.format(log.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                <td>
+                    <strong th:text="${log.actor.username}"></strong>
+                    <small th:text="'(' + ${log.actor.role} + ')'"></small>
+                </td>
+                <td>
+                    <span class="badge badge-action" th:text="${log.action}"></span>
+                </td>
+                <td>
+                    <span th:if="${log.targetUser != null}">
+                        User: <a th:href="@{/admin/users/{id}(id=${log.targetUser.id})}"
+                                 th:text="${log.targetUser.username}"></a>
+                    </span>
+                    <span th:if="${log.targetPost != null}">
+                        Post: <a th:href="@{/posts/{id}(id=${log.targetPost.id})}"
+                                 th:text="${#strings.abbreviate(log.targetPost.title, 30)}"></a>
+                    </span>
+                    <span th:if="${log.targetComment != null}">
+                        Comment #<span th:text="${log.targetComment.id}"></span>
+                    </span>
+                    <span th:if="${log.targetUser == null and log.targetPost == null and log.targetComment == null}"
+                          style="color:var(--color-muted);">—</span>
+                </td>
+                <td th:text="${log.note != null ? log.note : '—'}"></td>
+            </tr>
+            <tr th:if="${logs.isEmpty()}">
+                <td colspan="6" style="text-align:center;color:var(--color-muted);padding:32px;">
+                    Không tìm thấy bản ghi nào.
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
 
-    <div th:if="${logs != null and logs.totalPages > 1}" class="pagination">
+    <!-- Phân trang - giữ filter -->
+    <div th:if="${logs.totalPages > 1}" class="pagination">
         <a th:if="${!logs.first}"
-           th:href="@{/admin/audit-logs(page=${logs.number - 1})}"
+           th:href="@{/admin/audit-logs(actorUsername=${actorUsername},action=${action},page=${logs.number - 1})}"
            class="btn btn-outline btn-sm">Trước</a>
         <span class="page-info"
               th:text="'Trang ' + (${logs.number} + 1) + '/' + ${logs.totalPages}"></span>
         <a th:if="${!logs.last}"
-           th:href="@{/admin/audit-logs(page=${logs.number + 1})}"
+           th:href="@{/admin/audit-logs(actorUsername=${actorUsername},action=${action},page=${logs.number + 1})}"
            class="btn btn-outline btn-sm">Tiếp</a>
     </div>
 </section>

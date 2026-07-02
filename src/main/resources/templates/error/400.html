@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/main :: layout('400 Dữ liệu không hợp lệ', ~{::section})}"
+      lang="vi"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title>400</title></head>
+<body>
+<section>
+    <div class="empty-state" style="padding:100px 20px;">
+        <i class="fa-solid fa-circle-exclamation" style="color:var(--color-warning,#f59e0b);opacity:1;font-size:4rem;"></i>
+        <h2 style="font-size:1.5rem;margin-bottom:8px;">Yêu cầu không hợp lệ</h2>
+        <p th:text="${errorMessage != null ? errorMessage : 'Dữ liệu gửi lên không hợp lệ.'}">Dữ liệu không hợp lệ.</p>
+        <a onclick="history.back()" class="btn btn-ghost" style="margin-top:16px;cursor:pointer;">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+        <a th:href="@{/}" class="btn btn-primary" style="margin-top:16px;">
+            <i class="fa-solid fa-home"></i> Về trang chủ
+        </a>
+    </div>
+</section>
+</body>
+</html>
