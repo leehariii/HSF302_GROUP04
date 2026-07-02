@@ -111,4 +111,17 @@ public class UserServiceImpl implements UserService {
     public List<User> searchUsers(String keyword) {
         return userRepository.findByUsernameContainingIgnoreCase(keyword);
     }
+
+    /**
+     * Cap nhat thong tin ca nhan (fullName, avatarUrl).
+     * Khong thay doi role hoac status.
+     */
+    @Override
+    @Transactional
+    public void updateProfile(Long userId, String fullName, String avatarUrl) {
+        User user = findById(userId);
+        user.setFullName(fullName);
+        user.setAvatarUrl(avatarUrl);
+        userRepository.save(user);
+    }
 }

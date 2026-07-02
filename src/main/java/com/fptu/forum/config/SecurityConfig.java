@@ -71,9 +71,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public: trang auth, static files
                 .requestMatchers(
-                    "/auth/login", "/auth/register",
+                    "/auth/login", "/auth/register", "/auth/forgot-password",
                     "/css/**", "/js/**", "/images/**",
-                    "/webjars/**"
+                    "/webjars/**", "/error/**"
                 ).permitAll()
 
                 // Public: xem bai viet, topic (cho phep guest xem)
