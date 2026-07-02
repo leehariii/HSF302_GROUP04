@@ -24,7 +24,8 @@
             <a th:href="@{/}" class="nav-link">Trang chủ</a>
             <a th:href="@{/topics}" class="nav-link">Chủ đề</a>
             <form th:action="@{/search}" method="get" class="nav-search">
-                <input type="text" name="keyword" placeholder="Tìm kiếm..." class="search-input"/>
+                <input type="hidden" name="topicId" th:if="${selectedTopicId != null}" th:value="${selectedTopicId}" />
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm..." class="search-input"/>
                 <button type="submit" class="btn btn-sm btn-outline">
                     <i class="fa-solid fa-search"></i>
                 </button>

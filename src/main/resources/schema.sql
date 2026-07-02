@@ -32,8 +32,12 @@ BEGIN
                         CHECK (role IN ('MEMBER', 'MODERATOR', 'ADMIN')),
         status      NVARCHAR(20)  NOT NULL DEFAULT 'ACTIVE'
                         CHECK (status IN ('ACTIVE', 'BANNED')),
+        banned_reason NVARCHAR(255) NULL,
+        banned_by   BIGINT        NULL,
+        banned_at   DATETIME2     NULL,
         created_at  DATETIME2     NOT NULL DEFAULT GETDATE(),
-        updated_at  DATETIME2     NOT NULL DEFAULT GETDATE()
+        updated_at  DATETIME2     NOT NULL DEFAULT GETDATE(),
+        CONSTRAINT FK_users_banned_by FOREIGN KEY (banned_by) REFERENCES users(id)
     );
 END
 GO
@@ -65,12 +69,16 @@ BEGIN
                         CHECK (status IN ('ACTIVE', 'HIDDEN', 'DELETED')),
         is_pinned   BIT           NOT NULL DEFAULT 0,
         view_count  INT           NOT NULL DEFAULT 0,
+        image_url   NVARCHAR(255) NULL,
+        moderation_reason NVARCHAR(255) NULL,
+        moderated_by BIGINT       NULL,
         user_id     BIGINT        NOT NULL,
         topic_id    BIGINT        NOT NULL,
         created_at  DATETIME2     NOT NULL DEFAULT GETDATE(),
         updated_at  DATETIME2     NOT NULL DEFAULT GETDATE(),
         CONSTRAINT FK_posts_user  FOREIGN KEY (user_id)  REFERENCES users(id),
-        CONSTRAINT FK_posts_topic FOREIGN KEY (topic_id) REFERENCES topics(id)
+        CONSTRAINT FK_posts_topic FOREIGN KEY (topic_id) REFERENCES topics(id),
+        CONSTRAINT FK_posts_moderator FOREIGN KEY (moderated_by) REFERENCES users(id)
     );
 END
 GO
@@ -88,11 +96,13 @@ BEGIN
         user_id           BIGINT        NOT NULL,
         post_id           BIGINT        NOT NULL,
         parent_comment_id BIGINT        NULL,
+        moderated_by      BIGINT        NULL,
         created_at        DATETIME2     NOT NULL DEFAULT GETDATE(),
         updated_at        DATETIME2     NOT NULL DEFAULT GETDATE(),
         CONSTRAINT FK_comments_user    FOREIGN KEY (user_id)           REFERENCES users(id),
         CONSTRAINT FK_comments_post    FOREIGN KEY (post_id)           REFERENCES posts(id),
-        CONSTRAINT FK_comments_parent  FOREIGN KEY (parent_comment_id) REFERENCES comments(id)
+        CONSTRAINT FK_comments_parent  FOREIGN KEY (parent_comment_id) REFERENCES comments(id),
+        CONSTRAINT FK_comments_moderator FOREIGN KEY (moderated_by)    REFERENCES users(id)
     );
 END
 GO
@@ -184,9 +194,9 @@ BEGIN
         is_active        BIT           NOT NULL DEFAULT 1,
         start_at         DATETIME2     NOT NULL DEFAULT GETDATE(),
         end_at           DATETIME2     NULL,
-        created_by       BIGINT        NOT NULL,
+        restricted_by    BIGINT        NOT NULL,
         CONSTRAINT FK_restrictions_user    FOREIGN KEY (user_id)    REFERENCES users(id),
-        CONSTRAINT FK_restrictions_creator FOREIGN KEY (created_by) REFERENCES users(id)
+        CONSTRAINT FK_restrictions_creator FOREIGN KEY (restricted_by) REFERENCES users(id)
     );
 END
 GO

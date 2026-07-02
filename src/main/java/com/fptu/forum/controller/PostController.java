@@ -36,8 +36,17 @@ public class PostController {
     public String postDetail(@PathVariable Long id,
                              @AuthenticationPrincipal UserDetails userDetails,
                              Model model) {
-        Post post = postService.findActiveById(id);
-        postService.increaseViewCount(id);
+        User currentUser = null;
+        if (userDetails != null) {
+            currentUser = userService.findByUsername(userDetails.getUsername());
+        }
+
+        Post post = postService.getPostForDetailView(id, currentUser);
+
+        // Chi tang view count neu bai viet ACTIVE (public)
+        if (post.getStatus() == com.fptu.forum.enums.PostStatus.ACTIVE) {
+            postService.increaseViewCount(id);
+        }
 
         model.addAttribute("post", post);
         model.addAttribute("rootComments", commentService.findRootComments(id));
@@ -105,6 +114,7 @@ public class PostController {
         postRequest.setTitle(post.getTitle());
         postRequest.setContent(post.getContent());
         postRequest.setTopicId(post.getTopic().getId());
+        postRequest.setImageUrl(post.getImageUrl());
 
         model.addAttribute("postRequest", postRequest);
         model.addAttribute("topics", topicService.findAll());
