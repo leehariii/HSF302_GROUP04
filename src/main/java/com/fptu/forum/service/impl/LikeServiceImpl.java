@@ -4,12 +4,18 @@ import com.fptu.forum.entity.Comment;
 import com.fptu.forum.entity.Like;
 import com.fptu.forum.entity.Post;
 import com.fptu.forum.entity.User;
+import com.fptu.forum.enums.PostStatus;
+import com.fptu.forum.exception.BusinessException;
 import com.fptu.forum.repository.LikeRepository;
 import com.fptu.forum.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -29,6 +35,11 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public boolean toggleLikePost(User user, Post post) {
+        // Khong cho like bai viet da HIDDEN hoac DELETED
+        if (post.getStatus() != PostStatus.ACTIVE) {
+            throw new BusinessException("Khong the thich bai viet nay vi bai da bi an hoac xoa.");
+        }
+
         Optional<Like> existing =
                 likeRepository.findByUserAndPost(user.getId(), post.getId());
         if (existing.isPresent()) {
@@ -84,5 +95,44 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public boolean isCommentLiked(Long userId, Long commentId) {
         return likeRepository.existsByUserIdAndCommentId(userId, commentId);
+    }
+
+    /**
+     * Batch: tra ve Map<commentId, liked> cho user — 1 query IN.
+     * Comment khong co trong ket qua -> mac dinh false (chua like).
+     */
+    @Override
+    public Map<Long, Boolean> getCommentLikedMap(Long userId, List<Long> commentIds) {
+        if (commentIds == null || commentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<Long> likedIds = likeRepository.findLikedCommentIdsByUser(userId, commentIds);
+        Map<Long, Boolean> result = new HashMap<>();
+        for (Long id : commentIds) {
+            result.put(id, likedIds.contains(id));
+        }
+        return result;
+    }
+
+    /**
+     * Batch: tra ve Map<commentId, likeCount> — 1 query GROUP BY.
+     * Comment chua co like nao -> mac dinh 0.
+     */
+    @Override
+    public Map<Long, Long> getCommentLikeCountMap(List<Long> commentIds) {
+        if (commentIds == null || commentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<Object[]> rows = likeRepository.countLikesByCommentIds(commentIds);
+        Map<Long, Long> result = new HashMap<>();
+        for (Long id : commentIds) {
+            result.put(id, 0L); // mac dinh 0
+        }
+        for (Object[] row : rows) {
+            Long commentId = (Long) row[0];
+            Long count    = (Long) row[1];
+            result.put(commentId, count);
+        }
+        return result;
     }
 }
