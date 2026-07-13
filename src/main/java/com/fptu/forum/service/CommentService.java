@@ -22,5 +22,7 @@ public interface CommentService {
 
     void softDeleteComment(Long commentId);
 
+    void deleteMyComment(Long commentId, User user);
+
     long countActiveComments(Long postId);
 }

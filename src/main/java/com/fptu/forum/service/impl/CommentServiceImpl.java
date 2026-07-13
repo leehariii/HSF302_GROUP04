@@ -99,4 +99,18 @@ public class CommentServiceImpl implements CommentService {
     public long countActiveComments(Long postId) {
         return commentRepository.countActiveByPostId(postId);
     }
+
+    /**
+     * Member tu xoa mem comment cua minh.
+     */
+    @Override
+    @Transactional
+    public void deleteMyComment(Long commentId, User user) {
+        Comment comment = findById(commentId);
+        if (!comment.getAuthor().getId().equals(user.getId())) {
+            throw new ForbiddenException("Ban khong co quyen xoa binh luan nay.");
+        }
+        comment.setStatus(CommentStatus.DELETED);
+        commentRepository.save(comment);
+    }
 }
