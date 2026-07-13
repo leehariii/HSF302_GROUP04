@@ -59,8 +59,8 @@ public class ReportServiceImpl implements ReportService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", postId));
 
-        // Kiem tra da report bai nay chua
-        if (reportRepository.existsByReporterAndPost(reporter.getId(), postId)) {
+        // Kiem tra da co report PENDING cho bai nay chua
+        if (reportRepository.existsByReporterAndPostAndStatus(reporter.getId(), postId, ReportStatus.PENDING)) {
             throw new IllegalStateException("Ban da bao cao bai viet nay roi.");
         }
 
@@ -82,7 +82,7 @@ public class ReportServiceImpl implements ReportService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment", commentId));
 
-        if (reportRepository.existsByReporterAndComment(reporter.getId(), commentId)) {
+        if (reportRepository.existsByReporterAndCommentAndStatus(reporter.getId(), commentId, ReportStatus.PENDING)) {
             throw new IllegalStateException("Ban da bao cao binh luan nay roi.");
         }
 
