@@ -93,7 +93,7 @@ public class SecurityConfig {
                     "/posts/*/delete",
                     "/comments/**",
                     "/likes/**",
-                    "/bookmarks/**",
+                    "/member/saved-posts*",
                     "/reports/**",
                     "/profile", "/change-password"
                 ).authenticated()

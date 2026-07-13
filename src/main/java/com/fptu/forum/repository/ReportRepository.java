@@ -19,11 +19,11 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     // Dem so report PENDING (hien thi badge cho moderator)
     long countByStatus(ReportStatus status);
 
-    // Kiem tra user da report bai viet nay chua (tranh bao cao trung)
-    @Query("SELECT COUNT(r) > 0 FROM Report r WHERE r.reporter.id = :userId AND r.post.id = :postId")
-    boolean existsByReporterAndPost(@Param("userId") Long userId, @Param("postId") Long postId);
+    // Kiem tra user da co report PENDING cho bai viet nay chua (tranh spam bao cao)
+    @Query("SELECT COUNT(r) > 0 FROM Report r WHERE r.reporter.id = :userId AND r.post.id = :postId AND r.status = :status")
+    boolean existsByReporterAndPostAndStatus(@Param("userId") Long userId, @Param("postId") Long postId, @Param("status") ReportStatus status);
 
-    // Kiem tra user da report comment nay chua
-    @Query("SELECT COUNT(r) > 0 FROM Report r WHERE r.reporter.id = :userId AND r.comment.id = :commentId")
-    boolean existsByReporterAndComment(@Param("userId") Long userId, @Param("commentId") Long commentId);
+    // Kiem tra user da co report PENDING cho comment nay chua
+    @Query("SELECT COUNT(r) > 0 FROM Report r WHERE r.reporter.id = :userId AND r.comment.id = :commentId AND r.status = :status")
+    boolean existsByReporterAndCommentAndStatus(@Param("userId") Long userId, @Param("commentId") Long commentId, @Param("status") ReportStatus status);
 }

@@ -1,6 +1,7 @@
 package com.fptu.forum.controller;
 
 import com.fptu.forum.dto.request.PostRequest;
+import com.fptu.forum.entity.Comment;
 import com.fptu.forum.entity.Post;
 import com.fptu.forum.entity.User;
 import com.fptu.forum.service.*;
@@ -13,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller xu ly bai viet: xem, tao, sua, xoa mem.
@@ -48,8 +52,9 @@ public class PostController {
             postService.increaseViewCount(id);
         }
 
+        List<Comment> rootComments = commentService.findRootComments(id);
         model.addAttribute("post", post);
-        model.addAttribute("rootComments", commentService.findRootComments(id));
+        model.addAttribute("rootComments", rootComments);
         model.addAttribute("commentCount", commentService.countActiveComments(id));
         model.addAttribute("likeCount", likeService.countPostLikes(id));
 
@@ -59,6 +64,15 @@ public class PostController {
             model.addAttribute("currentUser", user);
             model.addAttribute("isLiked", likeService.isPostLiked(user.getId(), id));
             model.addAttribute("isSaved", savedPostService.isSaved(user.getId(), id));
+
+            // Batch: trang thai like va so like cua tung comment (2 query IN, khong phai N query)
+            List<Long> commentIds = rootComments.stream()
+                    .map(Comment::getId)
+                    .collect(Collectors.toList());
+            model.addAttribute("commentLikedMap",
+                    likeService.getCommentLikedMap(user.getId(), commentIds));
+            model.addAttribute("commentLikeCountMap",
+                    likeService.getCommentLikeCountMap(commentIds));
         }
 
         return "forum/post-detail";

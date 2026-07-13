@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,4 +33,14 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     // Kiem tra co like khong (tra ve boolean)
     boolean existsByUserIdAndPostId(Long userId, Long postId);
     boolean existsByUserIdAndCommentId(Long userId, Long commentId);
+
+    // Batch: lay danh sach commentId ma user da like (1 query IN)
+    @Query("SELECT l.comment.id FROM Like l WHERE l.user.id = :userId AND l.comment.id IN :commentIds")
+    List<Long> findLikedCommentIdsByUser(@Param("userId") Long userId,
+                                         @Param("commentIds") List<Long> commentIds);
+
+    // Batch: dem so like theo nhieu commentId cung luc (1 query IN)
+    // Tra ve List<Object[]> voi moi phan tu la [commentId, likeCount]
+    @Query("SELECT l.comment.id, COUNT(l) FROM Like l WHERE l.comment.id IN :commentIds GROUP BY l.comment.id")
+    List<Object[]> countLikesByCommentIds(@Param("commentIds") List<Long> commentIds);
 }

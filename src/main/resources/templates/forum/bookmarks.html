@@ -34,12 +34,11 @@
                         <i class="fa-solid fa-circle-user"></i>
                         <span th:text="${saved.post.author.username}"></span>
                     </span>
-                    <form th:action="@{/bookmarks/post/{id}(id=${saved.post.id})}" method="post">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" class="btn btn-outline btn-sm">
-                            <i class="fa-solid fa-bookmark-slash"></i> Bỏ lưu
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="btn btn-outline btn-sm js-unsave-bookmark"
+                            th:data-post-id="${saved.post.id}">
+                        <i class="fa-solid fa-bookmark-slash"></i> Bỏ lưu
+                    </button>
                 </div>
             </div>
         </div>
@@ -49,6 +48,35 @@
         <i class="fa-solid fa-bookmark"></i>
         <p>Bạn chưa lưu bài viết nào.</p>
         <a th:href="@{/}" class="btn btn-primary">Khám phá bài viết</a>
+    </div>
+
+    <!-- Pagination — dong bo voi home.html / topic-detail.html -->
+    <div th:if="${savedPosts != null and savedPosts.totalPages > 1}" class="pagination">
+        <a th:if="${!savedPosts.first}"
+           th:href="@{/member/saved-posts(page=${savedPosts.number - 1}, size=10)}"
+           class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-chevron-left"></i> Trước
+        </a>
+        <span th:if="${savedPosts.first}"
+              class="btn btn-outline btn-sm disabled"
+              style="pointer-events:none; opacity:0.5;">
+            <i class="fa-solid fa-chevron-left"></i> Trước
+        </span>
+
+        <span class="page-info"
+              th:text="'Trang ' + (${savedPosts.number} + 1) + ' / ' + ${savedPosts.totalPages}">
+        </span>
+
+        <a th:if="${!savedPosts.last}"
+           th:href="@{/member/saved-posts(page=${savedPosts.number + 1}, size=10)}"
+           class="btn btn-outline btn-sm">
+            Sau <i class="fa-solid fa-chevron-right"></i>
+        </a>
+        <span th:if="${savedPosts.last}"
+              class="btn btn-outline btn-sm disabled"
+              style="pointer-events:none; opacity:0.5;">
+            Sau <i class="fa-solid fa-chevron-right"></i>
+        </span>
     </div>
 </section>
 </body>
