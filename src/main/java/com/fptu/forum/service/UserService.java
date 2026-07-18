@@ -28,4 +28,10 @@ public interface UserService {
     void demoteModerator(Long targetUserId);
 
     List<User> searchUsers(String keyword);
+
+    /**
+     * Cap nhat thong tin ca nhan (fullName, avatarUrl).
+     * Khong cho phep tu sua role hoac status.
+     */
+    void updateProfile(Long userId, String fullName, String avatarUrl);
 }

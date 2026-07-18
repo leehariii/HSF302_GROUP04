@@ -14,13 +14,15 @@
                 <h3 class="sidebar-title"><i class="fa-solid fa-list"></i> Chủ đề</h3>
                 <ul class="topic-list">
                     <li>
-                        <a th:href="@{/}" class="topic-item">
+                        <a th:href="@{${keyword != null ? '/search' : '/'}(keyword=${keyword})}" class="topic-item"
+                           th:classappend="${selectedTopicId == null} ? ' active'">
                             <i class="fa-solid fa-fire"></i> Tất cả bài viết
                         </a>
                     </li>
                     <li th:each="topic : ${topics}">
-                        <a th:href="@{/topics/{id}(id=${topic.id})}"
+                        <a th:href="@{${keyword != null ? '/search' : '/'}(keyword=${keyword}, topicId=${topic.id})}"
                            class="topic-item"
+                           th:classappend="${selectedTopicId != null and selectedTopicId == topic.id} ? ' active'"
                            th:text="${topic.name}"></a>
                     </li>
                 </ul>
@@ -65,6 +67,10 @@
                         <p class="post-excerpt"
                            th:text="${#strings.abbreviate(post.content, 200)}"></p>
 
+                        <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}" style="margin-top: 12px; margin-bottom: 12px;">
+                            <img th:src="${post.imageUrl}" alt="Post image" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: cover;"/>
+                        </div>
+
                         <div class="post-footer">
                             <div class="post-author">
                                 <i class="fa-solid fa-circle-user"></i>
@@ -91,14 +97,14 @@
             <!-- Pagination -->
             <div th:if="${posts != null and posts.totalPages > 1}" class="pagination">
                 <a th:if="${!posts.first}"
-                   th:href="@{/(page=${posts.number - 1}, keyword=${keyword})}"
+                   th:href="@{${keyword != null ? '/search' : '/'}(page=${posts.number - 1}, keyword=${keyword}, topicId=${selectedTopicId})}"
                    class="btn btn-outline btn-sm">
                     <i class="fa-solid fa-chevron-left"></i> Trước
                 </a>
                 <span class="page-info"
                       th:text="'Trang ' + (${posts.number} + 1) + ' / ' + ${posts.totalPages}"></span>
                 <a th:if="${!posts.last}"
-                   th:href="@{/(page=${posts.number + 1}, keyword=${keyword})}"
+                   th:href="@{${keyword != null ? '/search' : '/'}(page=${posts.number + 1}, keyword=${keyword}, topicId=${selectedTopicId})}"
                    class="btn btn-outline btn-sm">
                     Tiếp <i class="fa-solid fa-chevron-right"></i>
                 </a>

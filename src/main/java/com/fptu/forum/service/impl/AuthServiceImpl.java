@@ -75,4 +75,20 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    /**
+     * Dat lai mat khau qua email (khong gui mail that).
+     * - Kiem tra email ton tai
+     * - BCrypt mat khau moi
+     * - Luu vao DB
+     */
+    @Override
+    @Transactional
+    public void forgotPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Khong tim thay tai khoan voi email: " + email));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }

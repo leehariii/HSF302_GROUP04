@@ -61,6 +61,17 @@
                           th:errors="*{content}" class="form-error"></span>
                 </div>
 
+                <!-- Image URL -->
+                <div class="form-group">
+                    <label class="form-label">URL Ảnh minh họa (Tùy chọn)</label>
+                    <input type="text" th:field="*{imageUrl}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('imageUrl')} ? ' is-invalid'"
+                           placeholder="https://..."/>
+                    <span th:if="${#fields.hasErrors('imageUrl')}"
+                          th:errors="*{imageUrl}" class="form-error"></span>
+                </div>
+
                 <div class="form-actions">
                     <a th:href="@{/}" class="btn btn-ghost">Hủy</a>
                     <button type="submit" class="btn btn-primary">

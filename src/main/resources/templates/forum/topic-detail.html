@@ -67,6 +67,22 @@
                 </div>
             </div>
 
+            <!-- Pagination -->
+            <div th:if="${posts != null and posts.totalPages > 1}" class="pagination">
+                <a th:if="${!posts.first}"
+                   th:href="@{/topics/{id}(id=${topic.id}, page=${posts.number - 1})}"
+                   class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-chevron-left"></i> Trước
+                </a>
+                <span class="page-info"
+                      th:text="'Trang ' + (${posts.number} + 1) + ' / ' + ${posts.totalPages}"></span>
+                <a th:if="${!posts.last}"
+                   th:href="@{/topics/{id}(id=${topic.id}, page=${posts.number + 1})}"
+                   class="btn btn-outline btn-sm">
+                    Tiếp <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </div>
+
             <div th:if="${posts == null or posts.isEmpty()}" class="empty-state">
                 <i class="fa-solid fa-inbox"></i>
                 <p>Chủ đề này chưa có bài viết nào.</p>

@@ -1,6 +1,7 @@
 package com.fptu.forum.controller;
 
 import com.fptu.forum.dto.request.CommentRequest;
+import com.fptu.forum.entity.Comment;
 import com.fptu.forum.entity.User;
 import com.fptu.forum.service.CommentService;
 import com.fptu.forum.service.UserService;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * Yeu cau dang nhap.
  */
 @Controller
-@RequestMapping("/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -25,10 +25,10 @@ public class CommentController {
     private final UserService userService;
 
     /**
-     * Dang binh luan / reply (POST form).
+     * Dang binh luan (POST form).
      * Sau khi binh luan, redirect ve bai viet.
      */
-    @PostMapping("/post/{postId}")
+    @PostMapping("/posts/{postId}/comments")
     public String addComment(@PathVariable Long postId,
                              @Valid @ModelAttribute CommentRequest request,
                              @AuthenticationPrincipal UserDetails userDetails,
@@ -41,5 +41,49 @@ public class CommentController {
             redirectAttributes.addFlashAttribute("errorMsg", e.getMessage());
         }
         return "redirect:/posts/" + postId;
+    }
+
+    /**
+     * Dang reply (POST form).
+     */
+    @PostMapping("/comments/{commentId}/reply")
+    public String replyComment(@PathVariable Long commentId,
+                               @Valid @ModelAttribute CommentRequest request,
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               RedirectAttributes redirectAttributes) {
+        Long postId = null;
+        try {
+            Comment parent = commentService.findById(commentId);
+            postId = parent.getPost().getId();
+            User user = userService.findByUsername(userDetails.getUsername());
+            
+            request.setParentCommentId(commentId);
+            commentService.createComment(postId, request, user);
+            redirectAttributes.addFlashAttribute("successMsg", "Tra loi binh luan thanh cong!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMsg", e.getMessage());
+        }
+        return postId != null ? "redirect:/posts/" + postId : "redirect:/";
+    }
+
+    /**
+     * Xoa mem binh luan (Cua chinh user)
+     */
+    @PostMapping("/comments/{commentId}/delete")
+    public String deleteMyComment(@PathVariable Long commentId,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  RedirectAttributes redirectAttributes) {
+        Long postId = null;
+        try {
+            Comment comment = commentService.findById(commentId);
+            postId = comment.getPost().getId();
+            User user = userService.findByUsername(userDetails.getUsername());
+            
+            commentService.deleteMyComment(commentId, user);
+            redirectAttributes.addFlashAttribute("successMsg", "Xoa binh luan thanh cong!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMsg", e.getMessage());
+        }
+        return postId != null ? "redirect:/posts/" + postId : "redirect:/";
     }
 }

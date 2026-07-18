@@ -7,6 +7,9 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="${pageTitle} + ' — FPTU Forum'">FPTU Forum</title>
+    <!-- CSRF meta tags cho AJAX fetch (doc boi getCsrfToken() trong main.js) -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -24,7 +27,8 @@
             <a th:href="@{/}" class="nav-link">Trang chủ</a>
             <a th:href="@{/topics}" class="nav-link">Chủ đề</a>
             <form th:action="@{/search}" method="get" class="nav-search">
-                <input type="text" name="keyword" placeholder="Tìm kiếm..." class="search-input"/>
+                <input type="hidden" name="topicId" th:if="${selectedTopicId != null}" th:value="${selectedTopicId}" />
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm..." class="search-input"/>
                 <button type="submit" class="btn btn-sm btn-outline">
                     <i class="fa-solid fa-search"></i>
                 </button>
@@ -62,7 +66,7 @@
                         <a th:href="@{/posts/new}" class="dropdown-item">
                             <i class="fa-solid fa-pen-to-square"></i> Đăng bài
                         </a>
-                        <a th:href="@{/bookmarks}" class="dropdown-item">
+                        <a th:href="@{/member/saved-posts}" class="dropdown-item">
                             <i class="fa-solid fa-bookmark"></i> Bookmark
                         </a>
                         <a th:href="@{/change-password}" class="dropdown-item">

@@ -48,8 +48,34 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> findAllActive(Pageable pageable) {
-        return postRepository.findAllActive(pageable);
+    public Post getPostForDetailView(Long id, User currentUser) {
+        Post post = findById(id);
+        
+        // Bai viet dang active -> Ai cung xem duoc
+        if (post.getStatus() == PostStatus.ACTIVE) {
+            return post;
+        }
+
+        // Bai viet bi an/xoa -> Khach khong xem duoc
+        if (currentUser == null) {
+            throw new ResourceNotFoundException("Bai viet khong ton tai hoac da bi an/xoa.");
+        }
+
+        // Kiem tra quyen: la tac gia hoac la Mod/Admin
+        boolean isAuthor = post.getAuthor().getId().equals(currentUser.getId());
+        boolean isModOrAdmin = (currentUser.getRole() == com.fptu.forum.enums.Role.MODERATOR 
+                             || currentUser.getRole() == com.fptu.forum.enums.Role.ADMIN);
+
+        if (isAuthor || isModOrAdmin) {
+            return post;
+        }
+
+        throw new ResourceNotFoundException("Bai viet khong ton tai hoac da bi an/xoa.");
+    }
+
+    @Override
+    public Page<Post> findAllActive(Long topicId, Pageable pageable) {
+        return postRepository.findActiveByOptionalTopic(topicId, pageable);
     }
 
     @Override
@@ -58,8 +84,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> searchPosts(String keyword, Pageable pageable) {
-        return postRepository.searchActivePosts(keyword, pageable);
+    public Page<Post> searchPosts(String keyword, Long topicId, Pageable pageable) {
+        return postRepository.searchActivePosts(keyword, topicId, pageable);
     }
 
     /**
@@ -79,6 +105,7 @@ public class PostServiceImpl implements PostService {
         Post post = new Post();
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
+        post.setImageUrl(request.getImageUrl() != null && !request.getImageUrl().isBlank() ? request.getImageUrl().trim() : null);
         post.setAuthor(author);
         post.setTopic(topic);
         post.setStatus(PostStatus.ACTIVE);
@@ -108,6 +135,7 @@ public class PostServiceImpl implements PostService {
         Topic topic = topicService.findById(request.getTopicId());
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
+        post.setImageUrl(request.getImageUrl() != null && !request.getImageUrl().isBlank() ? request.getImageUrl().trim() : null);
         post.setTopic(topic);
 
         return postRepository.save(post);
