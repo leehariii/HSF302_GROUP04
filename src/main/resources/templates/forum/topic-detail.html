@@ -40,7 +40,8 @@
             <div class="post-list" th:if="${posts != null and !posts.isEmpty()}">
                 <div th:each="post : ${posts}"
                      class="post-card"
-                     th:classappend="${post.isPinned} ? ' post-pinned'">
+                     th:classappend="${post.isPinned} ? ' post-pinned'"
+                     th:onclick="|window.location.href='@{/posts/{id}(id=${post.id})}'|">
                     <div th:if="${post.isPinned}" class="post-pin-badge">
                         <i class="fa-solid fa-thumbtack"></i> Ghim
                     </div>

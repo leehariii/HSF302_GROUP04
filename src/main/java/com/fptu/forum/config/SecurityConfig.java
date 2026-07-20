@@ -77,7 +77,7 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // Public: xem bai viet, topic (cho phep guest xem)
-                .requestMatchers("/", "/home", "/topics", "/topics/**",
+                .requestMatchers("/", "/home", "/search", "/topics", "/topics/**",
                     "/posts/{id:[0-9]+}").permitAll()
 
                 // Admin only
